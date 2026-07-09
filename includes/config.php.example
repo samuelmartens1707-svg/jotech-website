@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+// Vorlage für includes/config.php — diese Datei zu includes/config.php kopieren
+// und mit den echten Zugangsdaten der jeweiligen Umgebung befüllen.
+// config.php selbst ist über .gitignore ausgeschlossen und wird NICHT eingecheckt.
+return [
+    'db_host' => '127.0.0.1',
+    'db_port' => 3306,
+    'db_name' => 'jotech',
+    'db_user' => 'CHANGE_ME',
+    'db_pass' => 'CHANGE_ME',
+];

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontakt | JOTECH</title>
+<meta name="description" content="Kontaktiere JOTECH für Fragen zu Kauf, Ankauf oder Reparatur von PCs, Laptops und Hardware.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><span class="dot"></span>JO<em>TECH</em></a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Start</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="ankauf.html">Ankauf</a></li>
+        <li><a href="reparatur.html">Reparatur</a></li>
+        <li><a href="kontakt.html" aria-current="page">Kontakt</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a href="kontakt.html" class="btn btn--primary"><span class="btn-label-long">Jetzt anfragen</span></a>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Start</a><span class="sep">/</span>Kontakt</div>
+      <div class="eyebrow">Wir sind erreichbar</div>
+      <h1 style="font-size:clamp(2.2rem,5.5vw,4rem);">Kontakt</h1>
+      <p>Allgemeine Fragen, Produktanfragen oder individuelle Anliegen — schreib uns, wir melden uns in der Regel innerhalb eines Werktags.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container grid-2" style="align-items:start;">
+
+      <form action="php/send-mail.php" method="POST" novalidate>
+        <input type="hidden" name="form_type" value="kontakt">
+        <input type="hidden" name="form_loaded_at" value="">
+        <div class="honeypot" aria-hidden="true">
+          <label for="website3">Website</label>
+          <input type="text" id="website3" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="k-name">Name *</label>
+            <input type="text" id="k-name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="k-email">E-Mail *</label>
+            <input type="email" id="k-email" name="email" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="k-telefon">Telefon (optional)</label>
+            <input type="tel" id="k-telefon" name="phone">
+          </div>
+          <div class="field">
+            <label for="k-betreff">Betreff *</label>
+            <select id="k-betreff" name="subject" required>
+              <option value="Allgemeine Anfrage">Allgemeine Anfrage</option>
+              <option value="Produktanfrage">Produktanfrage</option>
+              <option value="Ankauf">Ankauf</option>
+              <option value="Reparatur">Reparatur</option>
+              <option value="Sonstiges">Sonstiges</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="k-nachricht">Nachricht *</label>
+          <textarea id="k-nachricht" name="message" required></textarea>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" name="consent" required>
+          <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage gespeichert und verarbeitet werden. Details in der <a href="datenschutz.html" style="color:var(--red);">Datenschutzerklärung</a>. *</span>
+        </label>
+
+        <button type="submit" class="btn btn--primary btn--block">Nachricht senden <span class="arrow">→</span></button>
+      </form>
+
+      <div class="stack" style="gap:1.5rem;">
+        <div class="info-card">
+          <h4>Adresse</h4>
+          <p style="margin:0;">JOTECH Hardware &amp; Service<br>Eschenweg 20<br>32339 Espelkamp</p>
+        </div>
+        <div class="info-card">
+          <h4>Erreichbarkeit</h4>
+          <p style="margin:0;">
+            Mo – Fr: 09:00 – 18:00 Uhr<br>
+            Sa: 10:00 – 14:00 Uhr<br>
+            <a href="mailto:info@jotech.de" style="color:var(--white);">info@jotech.de</a><br>
+            <a href="tel:+4917655377471" style="color:var(--white);">0176 55377471</a>
+          </p>
+        </div>
+        <div class="map-block">
+          <div class="pin">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="margin:0 auto .6rem;"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            Eschenweg 20, 32339 Espelkamp
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo"><span class="dot"></span>JO<em>TECH</em></a>
+        <p style="margin-top:1rem; max-width:32ch;">Ankauf, Verkauf und Reparatur von PCs, Laptops und Hardware — ehrlich bewertet, schnell abgewickelt.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="ankauf.html">Ankauf</a></li>
+          <li><a href="reparatur.html">Reparatur</a></li>
+          <li><a href="kontakt.html">Kontakt</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="impressum.html">Impressum</a></li>
+          <li><a href="datenschutz.html">Datenschutz</a></li>
+          <li><a href="agb.html">AGB</a></li>
+          <li><a href="widerruf.html">Widerruf</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="mailto:info@jotech.de">info@jotech.de</a></li>
+          <li><a href="tel:+4917655377471">0176 55377471</a></li>
+          <li>Eschenweg 20, 32339 Espelkamp</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> JOTECH — Alle Rechte vorbehalten.</span>
+      <span>Hardware-Handel &amp; Werkstatt</span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" aria-label="Nach oben scrollen">↑</button>
+
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var produkt = params.get('produkt');
+  if (produkt) {
+    var subject = document.getElementById('k-betreff');
+    var message = document.getElementById('k-nachricht');
+    if (subject) subject.value = 'Produktanfrage';
+    if (message) message.value = 'Ich interessiere mich für: ' + produkt;
+  }
+})();
+</script>
+</body>
+</html>

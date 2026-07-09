@@ -1,0 +1,10 @@
+# Enthält echte DB-Zugangsdaten — nie einchecken, pro Umgebung lokal anlegen
+includes/config.php
+
+# Von Nutzern hochgeladene Produktbilder sind umgebungsspezifischer Inhalt, kein Code
+uploads/products/*
+!uploads/products/.gitkeep
+
+# System-/Editor-Dateien
+.DS_Store
+*.log

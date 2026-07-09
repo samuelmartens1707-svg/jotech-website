@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danke für deine Anfrage | JOTECH</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><span class="dot"></span>JO<em>TECH</em></a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Start</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="ankauf.html">Ankauf</a></li>
+        <li><a href="reparatur.html">Reparatur</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a href="kontakt.html" class="btn btn--primary"><span class="btn-label-long">Jetzt anfragen</span></a>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section" style="padding-top: clamp(4rem,10vw,7rem);">
+    <div class="container">
+
+      <div class="status-panel" id="panelSuccess">
+        <div class="mark">✓</div>
+        <div class="eyebrow" style="justify-content:center;">Anfrage eingegangen</div>
+        <h1 style="font-size:clamp(2rem,4.5vw,3rem);">Danke, deine Nachricht ist bei uns angekommen.</h1>
+        <p style="margin-inline:auto; margin-top:1rem;">Wir prüfen deine Angaben und melden uns in der Regel innerhalb von 24 Stunden per E-Mail bei dir.</p>
+        <a href="index.html" class="btn btn--ghost" style="margin-top:2rem;">Zurück zur Startseite</a>
+      </div>
+
+      <div class="status-panel" id="panelError" style="display:none;">
+        <div class="mark" style="border-color:var(--red); color:var(--red);">!</div>
+        <div class="eyebrow" style="justify-content:center;">Etwas ist schiefgelaufen</div>
+        <h1 style="font-size:clamp(2rem,4.5vw,3rem);">Deine Anfrage konnte nicht gesendet werden.</h1>
+        <p style="margin-inline:auto; margin-top:1rem;">Bitte versuche es erneut oder schreibe uns direkt per E-Mail an <a href="mailto:info@jotech.de" style="color:var(--red);">info@jotech.de</a>.</p>
+        <a href="kontakt.html" class="btn btn--primary" style="margin-top:2rem;">Zurück zum Formular</a>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none; padding-top:0;">
+      <span>&copy; <span id="year"></span> JOTECH — Alle Rechte vorbehalten.</span>
+      <span><a href="impressum.html" style="color:var(--white-faint);">Impressum</a> · <a href="datenschutz.html" style="color:var(--white-faint);">Datenschutz</a> · <a href="agb.html" style="color:var(--white-faint);">AGB</a> · <a href="widerruf.html" style="color:var(--white-faint);">Widerruf</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('status') === 'error') {
+    document.getElementById('panelSuccess').style.display = 'none';
+    document.getElementById('panelError').style.display = 'block';
+  }
+})();
+</script>
+</body>
+</html>
