@@ -15,5 +15,5 @@ jobs:
       - name: Deploy with zerodeploy
         uses: mittwald/zerodeploy-action@v1
         with:
-          mittwald-api-token: ${{ e87e9e5b-546f-4b7d-b9ab-27e9d37004a5:qRt6nAzcl4ZtePtUIJn7a2HEQegcTN3K0XaQgK49Dnc:mittwald_a }}
+          mittwald-api-token: ${{ secrets.MITTWALD_API_TOKEN }}
           mittwald-project-id: "p-zhda4j"
