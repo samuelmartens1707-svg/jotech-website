@@ -2,7 +2,7 @@ name: Deploy to mittwald Container Hosting
 
 on:
   push:
-    branches: [main]
+    branches: [on]
   workflow_dispatch:
 
 jobs:
