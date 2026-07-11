@@ -28,6 +28,9 @@
       : (ICONS[p.category] || ICONS.pc);
     var specsHtml = escapeHtml(p.specs || '').replace(/\n/g, '<br>');
     var query = 'produkt=' + encodeURIComponent(p.title);
+    var cartButton = p.id
+      ? '<button type="button" class="icon-btn add-to-cart-btn" data-add-to-cart data-product-id="' + escapeHtml(p.id) + '" data-product-title="' + escapeHtml(p.title) + '" data-product-price="' + escapeHtml(p.price) + '">In den Warenkorb</button>'
+      : '';
     return (
       '<div class="product-card" data-cat="' + escapeHtml(p.category) + '">' +
         '<div class="product-media"><span class="stock">' + escapeHtml(p.stock_label) + '</span>' + media + '</div>' +
@@ -39,6 +42,7 @@
             '<span class="price">' + p.price_label + '&nbsp;€<small>' + escapeHtml(p.price_note) + '</small></span>' +
             '<a href="kontakt.html?' + query + '" class="icon-btn">Anfragen</a>' +
           '</div>' +
+          cartButton +
         '</div>' +
       '</div>'
     );

@@ -24,6 +24,7 @@ function admin_nav(string $active): void
         'dashboard' => ['index.php', 'Dashboard'],
         'products' => ['products.php', 'Produkte'],
         'inquiries' => ['inquiries.php', 'Anfragen'],
+        'orders' => ['orders.php', 'Bestellungen'],
     ];
     ?>
     <div class="admin-topbar">
@@ -51,6 +52,13 @@ function admin_foot(): void
 function status_pill(string $status): string
 {
     $labels = ['neu' => 'Neu', 'bearbeitet' => 'Bearbeitet', 'erledigt' => 'Erledigt'];
+    $label = $labels[$status] ?? $status;
+    return '<span class="status-pill status-pill--' . htmlspecialchars($status, ENT_QUOTES) . '">' . htmlspecialchars($label, ENT_QUOTES) . '</span>';
+}
+
+function lexoffice_sync_status_pill(string $status): string
+{
+    $labels = ['synced' => 'Synchronisiert', 'pending' => 'Ausstehend', 'failed' => 'Fehlgeschlagen'];
     $label = $labels[$status] ?? $status;
     return '<span class="status-pill status-pill--' . htmlspecialchars($status, ENT_QUOTES) . '">' . htmlspecialchars($label, ENT_QUOTES) . '</span>';
 }

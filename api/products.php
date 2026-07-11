@@ -7,7 +7,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $featuredOnly = isset($_GET['featured']);
 
-$sql = 'SELECT category, title, specs, price, price_note, stock_label,
+$sql = 'SELECT id, category, title, specs, price, price_note, stock_label,
     (SELECT filename FROM product_images pi WHERE pi.product_id = products.id ORDER BY pi.sort_order ASC, pi.id ASC LIMIT 1) AS image_filename
     FROM products WHERE is_active = 1';
 if ($featuredOnly) {
@@ -21,6 +21,7 @@ if ($featuredOnly) {
 $rows = get_pdo()->query($sql)->fetchAll();
 
 foreach ($rows as &$row) {
+    $row['id'] = (int) $row['id'];
     $price = (float) $row['price'];
     $isWhole = abs($price - round($price)) < 0.001;
     $row['price_label'] = $isWhole

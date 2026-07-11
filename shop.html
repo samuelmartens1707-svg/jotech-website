@@ -111,8 +111,97 @@
 
 <button class="to-top" aria-label="Nach oben scrollen">↑</button>
 
+<div class="cart-overlay" id="cartOverlay" hidden></div>
+<button type="button" class="cart-toggle" id="cartToggle" aria-label="Warenkorb öffnen">
+  Warenkorb<span class="cart-toggle-count" id="cartCount" hidden>0</span>
+</button>
+<aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+  <div class="cart-drawer-head">
+    <h3>Warenkorb</h3>
+    <button type="button" class="cart-close" id="cartClose" aria-label="Warenkorb schließen">✕</button>
+  </div>
+
+  <div class="cart-drawer-body">
+    <div id="cartStep-items">
+      <div id="cartItems"></div>
+      <p id="cartEmpty" class="cart-empty">Dein Warenkorb ist leer.</p>
+      <div class="cart-total" id="cartTotalRow" hidden>
+        <span>Gesamt (ca.)</span>
+        <span id="cartTotal">0,00 €</span>
+      </div>
+      <button type="button" class="btn btn--primary btn--block" id="cartCheckoutBtn" hidden>Zur Kasse</button>
+    </div>
+
+    <form id="checkoutForm" class="cart-checkout-form" hidden novalidate>
+      <input type="hidden" name="form_loaded_at" value="">
+      <div class="honeypot" aria-hidden="true">
+        <label for="co-website">Website</label>
+        <input type="text" id="co-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="co-vorname">Vorname *</label>
+          <input type="text" id="co-vorname" name="first_name" required>
+        </div>
+        <div class="field">
+          <label for="co-nachname">Nachname *</label>
+          <input type="text" id="co-nachname" name="last_name" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="co-email">E-Mail *</label>
+          <input type="email" id="co-email" name="email" required>
+        </div>
+        <div class="field">
+          <label for="co-telefon">Telefon (optional)</label>
+          <input type="tel" id="co-telefon" name="phone">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="co-strasse">Straße &amp; Hausnummer *</label>
+        <input type="text" id="co-strasse" name="street" required>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="co-plz">PLZ *</label>
+          <input type="text" id="co-plz" name="zip" required>
+        </div>
+        <div class="field">
+          <label for="co-ort">Ort *</label>
+          <input type="text" id="co-ort" name="city" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="co-land">Land *</label>
+        <select id="co-land" name="country_code" required>
+          <option value="DE" selected>Deutschland</option>
+          <option value="AT">Österreich</option>
+          <option value="CH">Schweiz</option>
+        </select>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" name="consent" required>
+        <span>Ich bin einverstanden, dass meine Angaben zur Abwicklung meiner Bestellung gespeichert und verarbeitet werden. Details in der <a href="datenschutz.html" style="color:var(--red);">Datenschutzerklärung</a>. *</span>
+      </label>
+
+      <p class="cart-form-error" id="checkoutError" hidden></p>
+
+      <button type="button" class="btn btn--ghost btn--block" id="cartBackBtn" style="margin-bottom:.8rem;">← Zurück zum Warenkorb</button>
+      <button type="submit" class="btn btn--primary btn--block" id="checkoutSubmitBtn">Kostenpflichtig bestellen <span class="arrow">→</span></button>
+    </form>
+  </div>
+</aside>
+
 <script src="js/main.js"></script>
 <script src="js/products.js"></script>
+<script src="js/cart.js"></script>
 <script>
 (function(){
   var buttons = document.querySelectorAll('.filter-btn');
