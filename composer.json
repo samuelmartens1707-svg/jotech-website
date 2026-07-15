@@ -1,0 +1,6 @@
+{
+    "name": "jotech/website",
+    "require": {
+        "php": ">=8.2"
+    }
+}
