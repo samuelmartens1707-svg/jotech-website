@@ -1,0 +1,19 @@
+name: Deploy to mittwald Container Hosting
+
+on:
+  push:
+    branches: [on]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy with zerodeploy
+        uses: mittwald/zerodeploy-action@v1
+        with:
+          mittwald-api-token: ${{ secrets.MITTWALD_API_TOKEN }}
+          mittwald-project-id: "p-zhda4j"
