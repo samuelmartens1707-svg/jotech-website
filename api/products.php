@@ -18,24 +18,7 @@ if ($featuredOnly) {
     $sql .= ' LIMIT 3';
 }
 
-try {
-    $rows = get_pdo()->query($sql)->fetchAll();
-} catch (Throwable $e) {
-    http_response_code(500);
-    $debug = ($_GET['debug'] ?? '') === 'jotech2026';
-    if ($debug) {
-        $config = get_db_config();
-        echo json_encode([
-            'error' => $e->getMessage(),
-            'resolved_ip' => gethostbyname($config['db_host']),
-            'db_host' => $config['db_host'],
-            'db_port' => $config['db_port'],
-        ]);
-    } else {
-        echo json_encode(['error' => 'internal_error']);
-    }
-    exit;
-}
+$rows = get_pdo()->query($sql)->fetchAll();
 
 foreach ($rows as &$row) {
     $row['id'] = (int) $row['id'];
