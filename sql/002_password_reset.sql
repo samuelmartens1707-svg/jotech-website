@@ -3,7 +3,7 @@
 -- oder: mariadb -u <user> -p <datenbank> < sql/002_password_reset.sql
 
 ALTER TABLE admin_users
-  ADD COLUMN IF NOT EXISTS email VARCHAR(190) NULL AFTER username;
+  ADD COLUMN email VARCHAR(190) NULL AFTER username;
 
 CREATE TABLE IF NOT EXISTS password_resets (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

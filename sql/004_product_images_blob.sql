@@ -4,8 +4,8 @@
 -- Einspielen wie schema.sql: per phpMyAdmin (Datenbank auswählen, dann Tab "SQL")
 
 ALTER TABLE product_images
-  ADD COLUMN IF NOT EXISTS mime_type VARCHAR(64) NULL AFTER filename,
-  ADD COLUMN IF NOT EXISTS data MEDIUMBLOB NULL AFTER mime_type;
+  ADD COLUMN mime_type VARCHAR(64) NULL AFTER filename,
+  ADD COLUMN data MEDIUMBLOB NULL AFTER mime_type;
 
 -- Alte Bild-Datensätze verweisen auf Dateien, die durch vorherige Deploys bereits
 -- gelöscht wurden und sind nicht mehr nutzbar — werden entfernt, damit im Admin
