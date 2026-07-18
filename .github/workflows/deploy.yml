@@ -12,6 +12,58 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # zerodeploy-action setzt die Umgebungsvariablen des Containers bei JEDEM Deploy
+      # komplett neu (kein Merge mit dem, was im mittwald-Dashboard steht). Ohne diese
+      # .env-Datei würde jeder Push die dort manuell eingetragenen Variablen löschen.
+      # Werte kommen aus GitHub-Repository-Secrets (Settings -> Secrets and variables
+      # -> Actions), nie aus dem Repo selbst.
+      - name: Build .env from repository secrets
+        shell: bash
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          LEXOFFICE_API_KEY: ${{ secrets.LEXOFFICE_API_KEY }}
+          LEXOFFICE_API_BASE_URL: ${{ secrets.LEXOFFICE_API_BASE_URL }}
+          LEXOFFICE_AUTO_FINALIZE: ${{ secrets.LEXOFFICE_AUTO_FINALIZE }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM_EMAIL: ${{ secrets.SMTP_FROM_EMAIL }}
+          SMTP_FROM_NAME: ${{ secrets.SMTP_FROM_NAME }}
+          SMTP_ENCRYPTION: ${{ secrets.SMTP_ENCRYPTION }}
+          SMTP_ALLOW_SELF_SIGNED: ${{ secrets.SMTP_ALLOW_SELF_SIGNED }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_API_BASE_URL: ${{ secrets.STRIPE_API_BASE_URL }}
+          STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: |
+          {
+            echo "DB_HOST=$DB_HOST"
+            echo "DB_PORT=$DB_PORT"
+            echo "DB_NAME=$DB_NAME"
+            echo "DB_USER=$DB_USER"
+            echo "DB_PASS=$DB_PASS"
+            echo "LEXOFFICE_API_KEY=$LEXOFFICE_API_KEY"
+            echo "LEXOFFICE_API_BASE_URL=$LEXOFFICE_API_BASE_URL"
+            echo "LEXOFFICE_AUTO_FINALIZE=$LEXOFFICE_AUTO_FINALIZE"
+            echo "SMTP_HOST=$SMTP_HOST"
+            echo "SMTP_PORT=$SMTP_PORT"
+            echo "SMTP_USER=$SMTP_USER"
+            echo "SMTP_PASS=$SMTP_PASS"
+            echo "SMTP_FROM_EMAIL=$SMTP_FROM_EMAIL"
+            echo "SMTP_FROM_NAME=$SMTP_FROM_NAME"
+            echo "SMTP_ENCRYPTION=$SMTP_ENCRYPTION"
+            echo "SMTP_ALLOW_SELF_SIGNED=$SMTP_ALLOW_SELF_SIGNED"
+            echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY"
+            echo "STRIPE_API_BASE_URL=$STRIPE_API_BASE_URL"
+            echo "STRIPE_API_VERSION=$STRIPE_API_VERSION"
+            echo "SITE_BASE_URL=$SITE_BASE_URL"
+          } > .env
+
       - name: Deploy with zerodeploy
         uses: mittwald/zerodeploy-action@v1
         with:
