@@ -54,6 +54,7 @@ admin_head('Anmelden');
     </div>
     <button type="submit" class="btn btn--primary btn--block">Anmelden</button>
   </form>
+  <p style="margin-top:1rem;"><a href="forgot-password.php">Passwort vergessen?</a></p>
 </div>
 
 <?php admin_foot(); ?>
