@@ -37,9 +37,11 @@ jobs:
           SMTP_ENCRYPTION: ${{ secrets.SMTP_ENCRYPTION }}
           SMTP_ALLOW_SELF_SIGNED: ${{ secrets.SMTP_ALLOW_SELF_SIGNED }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
           STRIPE_API_BASE_URL: ${{ secrets.STRIPE_API_BASE_URL }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          ADMIN_ALERT_EMAIL: ${{ secrets.ADMIN_ALERT_EMAIL }}
         run: |
           {
             echo "DB_HOST=$DB_HOST"
@@ -59,9 +61,11 @@ jobs:
             echo "SMTP_ENCRYPTION=$SMTP_ENCRYPTION"
             echo "SMTP_ALLOW_SELF_SIGNED=$SMTP_ALLOW_SELF_SIGNED"
             echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY"
+            echo "STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET"
             echo "STRIPE_API_BASE_URL=$STRIPE_API_BASE_URL"
             echo "STRIPE_API_VERSION=$STRIPE_API_VERSION"
             echo "SITE_BASE_URL=$SITE_BASE_URL"
+            echo "ADMIN_ALERT_EMAIL=$ADMIN_ALERT_EMAIL"
           } > .env
 
       - name: Deploy with zerodeploy
