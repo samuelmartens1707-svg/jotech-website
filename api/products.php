@@ -23,7 +23,17 @@ try {
 } catch (Throwable $e) {
     http_response_code(500);
     $debug = ($_GET['debug'] ?? '') === 'jotech2026';
-    echo json_encode(['error' => $debug ? $e->getMessage() : 'internal_error']);
+    if ($debug) {
+        $config = get_db_config();
+        echo json_encode([
+            'error' => $e->getMessage(),
+            'resolved_ip' => gethostbyname($config['db_host']),
+            'db_host' => $config['db_host'],
+            'db_port' => $config['db_port'],
+        ]);
+    } else {
+        echo json_encode(['error' => 'internal_error']);
+    }
     exit;
 }
 
