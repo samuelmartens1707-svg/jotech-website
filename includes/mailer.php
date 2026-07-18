@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-require __DIR__ . '/env.php';
+require_once __DIR__ . '/env.php';
 
 // Schlanker SMTP-Client ohne Composer-Abhängigkeit (passend zum Rest des Projekts).
 // Konfiguration ausschließlich über Umgebungsvariablen (siehe .env.example):
