@@ -1,6 +1,8 @@
 {
     "name": "jotech/website",
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
     }
 }
