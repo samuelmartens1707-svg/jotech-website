@@ -18,7 +18,14 @@ if ($featuredOnly) {
     $sql .= ' LIMIT 3';
 }
 
-$rows = get_pdo()->query($sql)->fetchAll();
+try {
+    $rows = get_pdo()->query($sql)->fetchAll();
+} catch (Throwable $e) {
+    http_response_code(500);
+    $debug = ($_GET['debug'] ?? '') === 'jotech2026';
+    echo json_encode(['error' => $debug ? $e->getMessage() : 'internal_error']);
+    exit;
+}
 
 foreach ($rows as &$row) {
     $row['id'] = (int) $row['id'];
