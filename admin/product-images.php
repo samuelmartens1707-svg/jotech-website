@@ -7,7 +7,6 @@ require_admin_login();
 
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const UPLOAD_DIR = __DIR__ . '/../uploads/products/';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: products.php');
@@ -37,7 +36,7 @@ if ($action === 'upload') {
         $stmt->execute([$productId]);
         $nextSortOrder = (int) $stmt->fetchColumn() + 1;
 
-        $insert = $pdo->prepare('INSERT INTO product_images (product_id, filename, sort_order) VALUES (?, ?, ?)');
+        $insert = $pdo->prepare('INSERT INTO product_images (product_id, filename, mime_type, data, sort_order) VALUES (?, ?, ?, ?, ?)');
 
         foreach ($files['name'] as $i => $originalName) {
             if ($files['error'][$i] === UPLOAD_ERR_NO_FILE) {
@@ -56,18 +55,22 @@ if ($action === 'upload') {
                 $errors[] = "$originalName: Nur JPG, PNG oder WEBP erlaubt.";
                 continue;
             }
-            if (@getimagesize($files['tmp_name'][$i]) === false) {
+            $imageInfo = @getimagesize($files['tmp_name'][$i]);
+            if ($imageInfo === false) {
                 $errors[] = "$originalName: Datei ist keine gültige Bilddatei.";
                 continue;
             }
 
-            $filename = bin2hex(random_bytes(8)) . '.' . $ext;
-            if (!move_uploaded_file($files['tmp_name'][$i], UPLOAD_DIR . $filename)) {
-                $errors[] = "$originalName: Konnte nicht gespeichert werden.";
+            // In der DB gespeichert (nicht auf dem Container-Dateisystem), da dieses
+            // bei jedem Deploy frisch aus dem Git-Repo gebaut wird und hochgeladene
+            // Dateien sonst verloren gehen.
+            $data = file_get_contents($files['tmp_name'][$i]);
+            if ($data === false) {
+                $errors[] = "$originalName: Konnte nicht gelesen werden.";
                 continue;
             }
 
-            $insert->execute([$productId, $filename, $nextSortOrder]);
+            $insert->execute([$productId, $originalName, $imageInfo['mime'], $data, $nextSortOrder]);
             $nextSortOrder++;
         }
     }
@@ -99,18 +102,7 @@ if ($action === 'upload') {
     }
 } elseif ($action === 'delete') {
     $imageId = (int) ($_POST['image_id'] ?? 0);
-    $stmt = $pdo->prepare('SELECT filename FROM product_images WHERE id = ? AND product_id = ?');
-    $stmt->execute([$imageId, $productId]);
-    $image = $stmt->fetch();
-
-    if ($image) {
-        $path = UPLOAD_DIR . $image['filename'];
-        if (is_file($path)) {
-            unlink($path);
-        }
-        $del = $pdo->prepare('DELETE FROM product_images WHERE id = ?');
-        $del->execute([$imageId]);
-    }
+    $pdo->prepare('DELETE FROM product_images WHERE id = ? AND product_id = ?')->execute([$imageId, $productId]);
 }
 
 $location = 'product-form.php?id=' . $productId;

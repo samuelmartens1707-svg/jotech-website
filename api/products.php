@@ -8,7 +8,7 @@ header('Content-Type: application/json; charset=utf-8');
 $featuredOnly = isset($_GET['featured']);
 
 $sql = 'SELECT id, category, title, specs, price, price_note, stock_label,
-    (SELECT filename FROM product_images pi WHERE pi.product_id = products.id ORDER BY pi.sort_order ASC, pi.id ASC LIMIT 1) AS image_filename
+    (SELECT id FROM product_images pi WHERE pi.product_id = products.id ORDER BY pi.sort_order ASC, pi.id ASC LIMIT 1) AS image_id
     FROM products WHERE is_active = 1';
 if ($featuredOnly) {
     $sql .= ' AND is_featured = 1';
@@ -27,8 +27,8 @@ foreach ($rows as &$row) {
     $row['price_label'] = $isWhole
         ? number_format($price, 0, ',', '.')
         : number_format($price, 2, ',', '.');
-    $row['image'] = $row['image_filename'] ? 'uploads/products/' . $row['image_filename'] : null;
-    unset($row['image_filename']);
+    $row['image'] = $row['image_id'] ? 'api/product-image.php?id=' . $row['image_id'] : null;
+    unset($row['image_id']);
 }
 
 echo json_encode($rows, JSON_UNESCAPED_UNICODE);

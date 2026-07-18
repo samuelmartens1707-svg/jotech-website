@@ -183,7 +183,7 @@ admin_nav('products');
       <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1.6rem;">
         <?php foreach ($images as $i => $img): ?>
           <div style="width:130px;">
-            <img src="../uploads/products/<?= htmlspecialchars($img['filename'], ENT_QUOTES) ?>" alt="" style="width:130px; height:95px; object-fit:cover; border:1px solid var(--line); display:block;">
+            <img src="../api/product-image.php?id=<?= (int) $img['id'] ?>" alt="" style="width:130px; height:95px; object-fit:cover; border:1px solid var(--line); display:block;">
             <div style="display:flex; gap:.3rem; margin-top:.4rem;">
               <form method="POST" action="product-images.php">
                 <?= csrf_field() ?>
