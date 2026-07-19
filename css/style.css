@@ -44,6 +44,8 @@ body{
   overflow-x: hidden;
 }
 
+code{ overflow-wrap: anywhere; }
+
 /* subtle grain + circuit texture layered behind everything */
 body::before{
   content:"";
@@ -187,6 +189,7 @@ img{ max-width: 100%; display:block; }
 .btn--block{ width: 100%; }
 .btn[disabled]{ opacity: .3; pointer-events: none; }
 .btn .arrow{ transition: transform .3s ease; }
+.btn span.btn-label-short{ display:none; }
 .btn:hover .arrow{ transform: translateX(4px); }
 
 /* ==========================================================================
@@ -284,6 +287,8 @@ img{ max-width: 100%; display:block; }
   .nav-links a{ font-size: 1.1rem; }
   .nav-toggle{ display:flex; }
   .nav-cta .btn span.btn-label-long{ display:none; }
+  .nav-cta .btn span.btn-label-short{ display:inline; }
+  .nav-cta .btn{ padding: .9em 1.2em; }
 }
 
 /* ==========================================================================
@@ -644,7 +649,7 @@ img{ max-width: 100%; display:block; }
 
 .wizard-body{ padding: clamp(1.8rem, 4vw, 3rem) var(--edge); }
 .wizard-foot{
-  display:flex; justify-content:space-between; align-items:center;
+  display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:.8rem;
   padding: 1.4rem var(--edge);
   border-top: 1px solid var(--line);
 }
