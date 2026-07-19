@@ -83,12 +83,12 @@ admin_nav('inquiries');
       <?php endif; ?>
       <?php foreach ($inquiries as $inq): ?>
         <tr>
-          <td><?= htmlspecialchars($inq['created_at'], ENT_QUOTES) ?></td>
-          <td><?= htmlspecialchars($typeLabels[$inq['form_type']] ?? $inq['form_type'], ENT_QUOTES) ?></td>
-          <td><?= htmlspecialchars($inq['name'], ENT_QUOTES) ?></td>
-          <td><?= htmlspecialchars($inq['email'], ENT_QUOTES) ?></td>
-          <td><?= status_pill($inq['status']) ?></td>
-          <td class="actions"><a href="inquiry-view.php?id=<?= (int) $inq['id'] ?>">Ansehen</a></td>
+          <td data-label="Eingegangen"><?= htmlspecialchars($inq['created_at'], ENT_QUOTES) ?></td>
+          <td data-label="Typ"><?= htmlspecialchars($typeLabels[$inq['form_type']] ?? $inq['form_type'], ENT_QUOTES) ?></td>
+          <td data-label="Name"><?= htmlspecialchars($inq['name'], ENT_QUOTES) ?></td>
+          <td data-label="E-Mail"><?= htmlspecialchars($inq['email'], ENT_QUOTES) ?></td>
+          <td data-label="Status"><?= status_pill($inq['status']) ?></td>
+          <td class="actions" data-label="Aktionen"><a href="inquiry-view.php?id=<?= (int) $inq['id'] ?>">Ansehen</a></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

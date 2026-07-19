@@ -8,12 +8,20 @@ require_admin_login();
 $pdo = get_pdo();
 
 $syncFilter = (string) ($_GET['sync'] ?? '');
+// Standardmäßig werden abgebrochene/nie bezahlte Checkout-Versuche ausgeblendet,
+// damit die Liste nicht mit Karteileichen zugemüllt wird — über den Filter
+// weiterhin einsehbar.
+$paymentFilter = (string) ($_GET['payment'] ?? 'paid');
 
 $where = [];
 $params = [];
 if (in_array($syncFilter, ['pending', 'synced', 'failed'], true)) {
     $where[] = 'lexoffice_sync_status = ?';
     $params[] = $syncFilter;
+}
+if (in_array($paymentFilter, ['pending', 'paid'], true)) {
+    $where[] = 'payment_status = ?';
+    $params[] = $paymentFilter;
 }
 $sql = 'SELECT * FROM orders';
 if ($where) {
@@ -24,9 +32,16 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $orders = $stmt->fetchAll();
 
-function orders_qs(string $sync): string
+function orders_qs(string $sync, string $payment): string
 {
-    return $sync !== '' ? '?sync=' . urlencode($sync) : '';
+    $params = [];
+    if ($sync !== '') {
+        $params['sync'] = $sync;
+    }
+    if ($payment !== '') {
+        $params['payment'] = $payment;
+    }
+    return $params ? '?' . http_build_query($params) : '';
 }
 
 require __DIR__ . '/../includes/admin-partials.php';
@@ -40,11 +55,17 @@ admin_nav('orders');
 
 <div style="display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:1.6rem; font-family:var(--font-mono); font-size:.8rem;">
   <div>
+    Zahlung:
+    <a href="<?= orders_qs($syncFilter, 'paid') ?>" class="<?= $paymentFilter === 'paid' ? 'is-active' : '' ?>" style="margin-left:.4em;">Bezahlt</a> ·
+    <a href="<?= orders_qs($syncFilter, 'pending') ?>" class="<?= $paymentFilter === 'pending' ? 'is-active' : '' ?>">Ausstehend</a> ·
+    <a href="<?= orders_qs($syncFilter, '') ?>" class="<?= $paymentFilter === '' ? 'is-active' : '' ?>">Alle (auch unbezahlt)</a>
+  </div>
+  <div>
     Sync-Status:
-    <a href="<?= orders_qs('') ?>" class="<?= $syncFilter === '' ? 'is-active' : '' ?>" style="margin-left:.4em;">Alle</a> ·
-    <a href="<?= orders_qs('pending') ?>">Ausstehend</a> ·
-    <a href="<?= orders_qs('synced') ?>">Synchronisiert</a> ·
-    <a href="<?= orders_qs('failed') ?>">Fehlgeschlagen</a>
+    <a href="<?= orders_qs('', $paymentFilter) ?>" class="<?= $syncFilter === '' ? 'is-active' : '' ?>" style="margin-left:.4em;">Alle</a> ·
+    <a href="<?= orders_qs('pending', $paymentFilter) ?>">Ausstehend</a> ·
+    <a href="<?= orders_qs('synced', $paymentFilter) ?>">Synchronisiert</a> ·
+    <a href="<?= orders_qs('failed', $paymentFilter) ?>">Fehlgeschlagen</a>
   </div>
 </div>
 
@@ -56,22 +77,24 @@ admin_nav('orders');
         <th>Kunde</th>
         <th>E-Mail</th>
         <th>Gesamt</th>
+        <th>Zahlung</th>
         <th>Lexware-Sync</th>
         <th>Aktionen</th>
       </tr>
     </thead>
     <tbody>
       <?php if (!$orders): ?>
-        <tr><td colspan="6">Keine Bestellungen gefunden.</td></tr>
+        <tr><td colspan="7">Keine Bestellungen gefunden.</td></tr>
       <?php endif; ?>
       <?php foreach ($orders as $o): ?>
         <tr>
-          <td><?= htmlspecialchars($o['created_at'], ENT_QUOTES) ?></td>
-          <td><?= htmlspecialchars($o['first_name'] . ' ' . $o['last_name'], ENT_QUOTES) ?></td>
-          <td><?= htmlspecialchars($o['customer_email'], ENT_QUOTES) ?></td>
-          <td><?= number_format((float) $o['total_gross'], 2, ',', '.') ?>&nbsp;€</td>
-          <td><?= lexoffice_sync_status_pill($o['lexoffice_sync_status']) ?></td>
-          <td class="actions"><a href="order-view.php?id=<?= (int) $o['id'] ?>">Ansehen</a></td>
+          <td data-label="Eingegangen"><?= htmlspecialchars($o['created_at'], ENT_QUOTES) ?></td>
+          <td data-label="Kunde"><?= htmlspecialchars(trim($o['first_name'] . ' ' . $o['last_name']) ?: '—', ENT_QUOTES) ?></td>
+          <td data-label="E-Mail"><?= htmlspecialchars($o['customer_email'] ?? '—', ENT_QUOTES) ?></td>
+          <td data-label="Gesamt"><?= number_format((float) $o['total_gross'], 2, ',', '.') ?>&nbsp;€</td>
+          <td data-label="Zahlung"><?= payment_status_pill($o['payment_status']) ?></td>
+          <td data-label="Lexware-Sync"><?= lexoffice_sync_status_pill($o['lexoffice_sync_status']) ?></td>
+          <td class="actions" data-label="Aktionen"><a href="order-view.php?id=<?= (int) $o['id'] ?>">Ansehen</a></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

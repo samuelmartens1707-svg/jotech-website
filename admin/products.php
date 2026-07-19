@@ -86,12 +86,12 @@ admin_nav('products');
       <?php endif; ?>
       <?php foreach ($products as $i => $p): ?>
         <tr>
-          <td><?= htmlspecialchars($p['title'], ENT_QUOTES) ?></td>
-          <td><?= htmlspecialchars($categoryLabels[$p['category']] ?? $p['category'], ENT_QUOTES) ?></td>
-          <td><?= number_format((float) $p['price'], 2, ',', '.') ?>&nbsp;€</td>
-          <td><?= $p['is_active'] ? '<span class="status-pill status-pill--erledigt">Aktiv</span>' : '<span class="status-pill status-pill--neu">Inaktiv</span>' ?></td>
-          <td><?= $p['is_featured'] ? 'Ja' : '—' ?></td>
-          <td class="actions">
+          <td data-label="Titel"><?= htmlspecialchars($p['title'], ENT_QUOTES) ?></td>
+          <td data-label="Kategorie"><?= htmlspecialchars($categoryLabels[$p['category']] ?? $p['category'], ENT_QUOTES) ?></td>
+          <td data-label="Preis"><?= number_format((float) $p['price'], 2, ',', '.') ?>&nbsp;€</td>
+          <td data-label="Status"><?= $p['is_active'] ? '<span class="status-pill status-pill--erledigt">Aktiv</span>' : '<span class="status-pill status-pill--neu">Inaktiv</span>' ?></td>
+          <td data-label="Featured"><?= $p['is_featured'] ? 'Ja' : '—' ?></td>
+          <td class="actions" data-label="Aktionen">
             <form method="POST" style="display:inline;">
               <?= csrf_field() ?>
               <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">

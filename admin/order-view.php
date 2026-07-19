@@ -47,14 +47,28 @@ admin_nav('orders');
 
 <div class="info-card" style="margin-bottom:1.6rem;">
   <h4>Kunde</h4>
+  <?php if ($order['payment_status'] !== 'paid'): ?>
+    <p style="margin:0 0 .8em;">Noch keine Zahlung eingegangen — Kundendaten werden erst nach erfolgreicher Stripe-Zahlung übernommen.</p>
+  <?php else: ?>
+    <p style="margin:0 0 .8em;">
+      <?= htmlspecialchars(trim($order['first_name'] . ' ' . $order['last_name']), ENT_QUOTES) ?><br>
+      <a href="mailto:<?= htmlspecialchars((string) $order['customer_email'], ENT_QUOTES) ?>" style="color:var(--red);"><?= htmlspecialchars((string) $order['customer_email'], ENT_QUOTES) ?></a><br>
+      <?php if ($order['customer_phone']): ?><?= htmlspecialchars($order['customer_phone'], ENT_QUOTES) ?><br><?php endif; ?>
+      <?= htmlspecialchars((string) $order['billing_street'], ENT_QUOTES) ?><br>
+      <?= htmlspecialchars($order['billing_zip'] . ' ' . $order['billing_city'], ENT_QUOTES) ?>,
+      <?= htmlspecialchars((string) $order['billing_country_code'], ENT_QUOTES) ?>
+    </p>
+  <?php endif; ?>
+  <p style="margin:0;">Eingegangen am <?= htmlspecialchars($order['created_at'], ENT_QUOTES) ?></p>
+</div>
+
+<div class="info-card" style="margin-bottom:1.6rem;">
+  <h4>Zahlung (Stripe)</h4>
   <p style="margin:0;">
-    <?= htmlspecialchars($order['first_name'] . ' ' . $order['last_name'], ENT_QUOTES) ?><br>
-    <a href="mailto:<?= htmlspecialchars($order['customer_email'], ENT_QUOTES) ?>" style="color:var(--red);"><?= htmlspecialchars($order['customer_email'], ENT_QUOTES) ?></a><br>
-    <?php if ($order['customer_phone']): ?><?= htmlspecialchars($order['customer_phone'], ENT_QUOTES) ?><br><?php endif; ?>
-    <?= htmlspecialchars($order['billing_street'], ENT_QUOTES) ?><br>
-    <?= htmlspecialchars($order['billing_zip'] . ' ' . $order['billing_city'], ENT_QUOTES) ?>,
-    <?= htmlspecialchars($order['billing_country_code'], ENT_QUOTES) ?><br>
-    Eingegangen am <?= htmlspecialchars($order['created_at'], ENT_QUOTES) ?>
+    Status: <?= payment_status_pill($order['payment_status']) ?><br>
+    <?php if ($order['paid_at']): ?>Bezahlt am: <?= htmlspecialchars($order['paid_at'], ENT_QUOTES) ?><br><?php endif; ?>
+    <?php if ($order['stripe_checkout_session_id']): ?>Checkout-Session: <code><?= htmlspecialchars($order['stripe_checkout_session_id'], ENT_QUOTES) ?></code><br><?php endif; ?>
+    <?php if ($order['stripe_payment_intent_id']): ?>Payment-Intent: <code><?= htmlspecialchars($order['stripe_payment_intent_id'], ENT_QUOTES) ?></code><?php endif; ?>
   </p>
 </div>
 
@@ -68,10 +82,10 @@ admin_nav('orders');
       <tbody>
         <?php foreach ($items as $item): ?>
           <tr>
-            <td><?= htmlspecialchars($item['name'], ENT_QUOTES) ?></td>
-            <td><?= (int) $item['quantity'] ?>&nbsp;<?= htmlspecialchars($item['unit_name'], ENT_QUOTES) ?></td>
-            <td><?= number_format((float) $item['unit_price_gross'], 2, ',', '.') ?>&nbsp;€</td>
-            <td><?= number_format((float) $item['unit_price_gross'] * (int) $item['quantity'], 2, ',', '.') ?>&nbsp;€</td>
+            <td data-label="Artikel"><?= htmlspecialchars($item['name'], ENT_QUOTES) ?></td>
+            <td data-label="Menge"><?= (int) $item['quantity'] ?>&nbsp;<?= htmlspecialchars($item['unit_name'], ENT_QUOTES) ?></td>
+            <td data-label="Einzelpreis"><?= number_format((float) $item['unit_price_gross'], 2, ',', '.') ?>&nbsp;€</td>
+            <td data-label="Summe"><?= number_format((float) $item['unit_price_gross'] * (int) $item['quantity'], 2, ',', '.') ?>&nbsp;€</td>
           </tr>
         <?php endforeach; ?>
       </tbody>

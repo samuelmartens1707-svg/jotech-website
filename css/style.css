@@ -324,6 +324,9 @@ img{ max-width: 100%; display:block; }
 @media (max-width: 780px){
   .footer-grid{ grid-template-columns: 1fr 1fr; }
 }
+@media (max-width: 480px){
+  .footer-grid{ grid-template-columns: 1fr; }
+}
 
 /* ==========================================================================
    Utility layout
@@ -513,7 +516,7 @@ img{ max-width: 100%; display:block; }
 .product-body{ padding: 1.4rem 1.4rem 1.6rem; display:flex; flex-direction:column; gap:.5rem; flex:1; }
 .product-cat{ font-family: var(--font-mono); font-size:.66rem; letter-spacing:.14em; color: var(--white-faint); text-transform:uppercase; }
 .product-body h3{ font-size: 1.25rem; margin:0; }
-.product-specs{ font-family: var(--font-mono); font-size:.72rem; color: var(--white-dim); line-height:1.8; margin: .3rem 0 .8rem; }
+.product-specs{ font-family: var(--font-mono); font-size:.72rem; color: var(--white-dim); line-height:1.8; margin: .3rem 0 .8rem; overflow-wrap: anywhere; }
 .product-footer{ margin-top:auto; display:flex; align-items:center; justify-content:space-between; padding-top: .8rem; border-top: 1px dashed var(--line); }
 .price{ font-family: var(--font-display); font-size: 1.5rem; color: var(--white); }
 .price small{ font-family: var(--font-mono); font-size:.6rem; color: var(--white-faint); display:block; letter-spacing:.1em; }
@@ -634,6 +637,11 @@ img{ max-width: 100%; display:block; }
 .wizard-steps .ws.done .b{ border-color: var(--red); color: var(--red); }
 .wizard-steps .ws.done{ color: var(--white-dim); }
 
+@media (max-width: 640px){
+  .wizard-steps .ws span:not(.b){ display:none; }
+  .wizard-steps .ws{ padding-right:.7rem; margin-right:.7rem; }
+}
+
 .wizard-body{ padding: clamp(1.8rem, 4vw, 3rem) var(--edge); }
 .wizard-foot{
   display:flex; justify-content:space-between; align-items:center;
@@ -651,6 +659,7 @@ img{ max-width: 100%; display:block; }
 
 .option-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border:1px solid var(--line); }
 @media (max-width: 760px){ .option-grid{ grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 480px){ .option-grid{ grid-template-columns: 1fr; } }
 
 .option-card{ position:relative; }
 .option-card input{ position:absolute; opacity:0; inset:0; width:100%; height:100%; cursor:pointer; margin:0; }
@@ -801,7 +810,7 @@ img{ max-width: 100%; display:block; }
 
 /* back to top */
 .to-top{
-  position: fixed; right: 1.6rem; bottom: 1.6rem;
+  position: fixed; right: 1.6rem; bottom: calc(1.6rem + env(safe-area-inset-bottom));
   width: 48px; height:48px;
   border: 1px solid var(--line);
   background: var(--black-soft);
@@ -819,7 +828,7 @@ img{ max-width: 100%; display:block; }
 .add-to-cart-btn{ border:none; background:none; cursor:pointer; font: inherit; }
 
 .cart-toggle{
-  position: fixed; right: 1.6rem; bottom: 5.6rem;
+  position: fixed; right: 1.6rem; bottom: calc(5.6rem + env(safe-area-inset-bottom));
   display:flex; align-items:center; gap:.5em;
   padding: .8em 1.2em;
   border: 1px solid var(--line);
@@ -917,6 +926,10 @@ img{ max-width: 100%; display:block; }
 
 .admin-title-row{ display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; margin-bottom: 1.6rem; }
 
+.admin-thumb-list{ display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1.6rem; }
+.admin-thumb{ width:130px; }
+.admin-thumb img{ width:130px; height:95px; object-fit:cover; border:1px solid var(--line); display:block; }
+
 .stat-row{ display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 1rem; margin-bottom: 2.4rem; }
 .stat-card{ border:1px solid var(--line); background: var(--black-soft); padding: 1.2rem 1.4rem; }
 .stat-card .num{ display:block; font-family: var(--font-display); font-size: 2.2rem; font-weight:800; line-height:1; }
@@ -930,6 +943,29 @@ table.admin-table tr:last-child td{ border-bottom:none; }
 table.admin-table td.actions{ white-space:nowrap; }
 table.admin-table td.actions a, table.admin-table td.actions button{ margin-right: .8rem; }
 
+@media (max-width: 700px){
+  .table-wrap{ overflow-x: visible; border: none; }
+  table.admin-table{ min-width: 0; }
+  table.admin-table thead{ display:none; }
+  table.admin-table, table.admin-table tbody, table.admin-table tr, table.admin-table td{ display:block; width:100%; }
+  table.admin-table tr{ border:1px solid var(--line); background: var(--black-soft); margin-bottom: 1rem; }
+  table.admin-table tr:last-child{ margin-bottom:0; }
+  table.admin-table td{ padding:.55rem 1rem; border-bottom:1px dashed var(--line); text-align:left; overflow-wrap:anywhere; }
+  table.admin-table tr td:last-child{ border-bottom:none; }
+  table.admin-table td::before{
+    content: attr(data-label);
+    display:block;
+    font-family: var(--font-mono);
+    font-size:.66rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color: var(--white-faint);
+    margin-bottom:.3em;
+  }
+  table.admin-table td[colspan]::before{ content:none; }
+  table.admin-table td.actions{ white-space:normal; display:flex; flex-wrap:wrap; gap:.5rem 1rem; }
+}
+
 .status-pill{ display:inline-block; padding:.2em .7em; font-family: var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid var(--line); border-radius: 999px; }
 .status-pill--neu{ border-color: var(--red); color: var(--red); }
 .status-pill--bearbeitet{ border-color: var(--white-dim); color: var(--white-dim); }
@@ -937,6 +973,7 @@ table.admin-table td.actions a, table.admin-table td.actions button{ margin-righ
 .status-pill--synced{ border-color:#2e7d32; color:#2e7d32; }
 .status-pill--pending{ border-color:#b8860b; color:#b8860b; }
 .status-pill--failed{ border-color: var(--red); color: var(--red); }
+.status-pill--paid{ border-color:#2e7d32; color:#2e7d32; }
 
 .link-btn{ background:none; border:none; padding:0; font: inherit; color: var(--red); cursor:pointer; text-decoration: underline; }
 .link-btn--muted{ color: var(--white-dim); }
@@ -947,3 +984,16 @@ table.admin-table td.actions a, table.admin-table td.actions button{ margin-righ
 .login-shell{ max-width: 380px; margin: clamp(3rem,10vh,7rem) auto 0; padding: 0 var(--edge); }
 .login-shell .btn{ margin-top: .6rem; }
 .to-top:hover{ border-color: var(--red); color: var(--red); }
+
+/* ==========================================================================
+   Small-phone tightening (≤480px) — cosmetic padding/spacing reduction only,
+   no structural/layout changes (those live with their components above)
+   ========================================================================== */
+@media (max-width: 480px){
+  .pillar{ padding: 1.8rem 1.4rem; min-height: auto; }
+  .option-card label{ padding: 1.2rem 1rem; }
+  .summary-box{ padding: 1.2rem; }
+  .info-card{ padding: 1.3rem; }
+  .to-top{ width:44px; height:44px; right:1rem; }
+  .cart-toggle{ right:1rem; padding:.65em 1em; font-size:.72rem; }
+}
