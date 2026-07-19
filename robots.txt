@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /api/
+Allow: /api/product-image.php
+Disallow: /uploads/
+Disallow: /sql/
+Disallow: /bin/
+
+Sitemap: https://jotech.de/sitemap.xml
