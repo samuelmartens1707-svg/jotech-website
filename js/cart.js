@@ -130,6 +130,13 @@
       drawer.classList.add('is-open');
       drawer.setAttribute('aria-hidden', 'false');
       if (overlay) overlay.hidden = false;
+
+      var navLinks = document.querySelector('.nav-links');
+      var navToggle = document.querySelector('.nav-toggle');
+      if (navLinks && navLinks.classList.contains('open')) {
+        navLinks.classList.remove('open');
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      }
     }
 
     function closeDrawer() {

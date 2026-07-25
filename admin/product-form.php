@@ -184,7 +184,7 @@ admin_nav('products');
         <?php foreach ($images as $i => $img): ?>
           <div class="admin-thumb">
             <img src="../api/product-image.php?id=<?= (int) $img['id'] ?>" alt="">
-            <div style="display:flex; gap:.3rem; margin-top:.4rem;">
+            <div style="display:flex; flex-wrap:wrap; gap:.2rem .5rem; margin-top:.4rem;">
               <form method="POST" action="product-images.php">
                 <?= csrf_field() ?>
                 <input type="hidden" name="product_id" value="<?= (int) $id ?>">

@@ -10,6 +10,15 @@
       toggle.addEventListener('click', function () {
         var open = links.classList.toggle('open');
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+          var cartDrawer = document.getElementById('cartDrawer');
+          var cartOverlay = document.getElementById('cartOverlay');
+          if (cartDrawer && cartDrawer.classList.contains('is-open')) {
+            cartDrawer.classList.remove('is-open');
+            cartDrawer.setAttribute('aria-hidden', 'true');
+            if (cartOverlay) cartOverlay.hidden = true;
+          }
+        }
       });
       links.querySelectorAll('a').forEach(function (a) {
         a.addEventListener('click', function () {
