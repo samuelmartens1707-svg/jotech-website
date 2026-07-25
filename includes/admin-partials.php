@@ -62,3 +62,10 @@ function lexoffice_sync_status_pill(string $status): string
     $label = $labels[$status] ?? $status;
     return '<span class="status-pill status-pill--' . htmlspecialchars($status, ENT_QUOTES) . '">' . htmlspecialchars($label, ENT_QUOTES) . '</span>';
 }
+
+function payment_status_pill(string $status): string
+{
+    $labels = ['paid' => 'Bezahlt', 'pending' => 'Ausstehend'];
+    $label = $labels[$status] ?? $status;
+    return '<span class="status-pill status-pill--' . htmlspecialchars($status, ENT_QUOTES) . '">' . htmlspecialchars($label, ENT_QUOTES) . '</span>';
+}

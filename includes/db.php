@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-require __DIR__ . '/env.php';
+require_once __DIR__ . '/env.php';
 
 // Zugangsdaten kommen bevorzugt aus echten Server-Umgebungsvariablen (production,
 // z.B. mittwald Container Hosting), da config.php nie eingecheckt wird. Lokal

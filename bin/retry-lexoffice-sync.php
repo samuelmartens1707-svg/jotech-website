@@ -12,12 +12,16 @@ if (PHP_SAPI !== 'cli') {
 }
 
 require __DIR__ . '/../includes/lexwareOfficeService.php';
+require __DIR__ . '/../includes/mailer.php';
 
 const MAX_ATTEMPTS = 5;
 
 $pdo = get_pdo();
+// payment_status = 'paid': Rechnungen werden erst nach bestätigter Stripe-Zahlung
+// erstellt, nie für abgebrochene/unbezahlte Checkout-Versuche.
 $stmt = $pdo->prepare(
-    "SELECT id FROM orders WHERE lexoffice_sync_status IN ('pending', 'failed') AND lexoffice_attempts < ? ORDER BY created_at ASC"
+    "SELECT id FROM orders WHERE payment_status = 'paid'
+     AND lexoffice_sync_status IN ('pending', 'failed') AND lexoffice_attempts < ? ORDER BY created_at ASC"
 );
 $stmt->execute([MAX_ATTEMPTS]);
 $orderIds = array_column($stmt->fetchAll(), 'id');
@@ -29,12 +33,31 @@ if (!$orderIds) {
 
 echo count($orderIds) . " offene Bestellung(en) werden synchronisiert...\n";
 
+$adminAlertEmail = env('ADMIN_ALERT_EMAIL', '');
+
 foreach ($orderIds as $orderId) {
     lexoffice_sync_order((int) $orderId);
 
-    $check = $pdo->prepare('SELECT lexoffice_sync_status FROM orders WHERE id = ?');
+    $check = $pdo->prepare('SELECT lexoffice_sync_status, lexoffice_attempts, lexoffice_last_error FROM orders WHERE id = ?');
     $check->execute([$orderId]);
-    $status = $check->fetchColumn();
+    $row = $check->fetch();
+    $status = $row['lexoffice_sync_status'];
 
     echo "Order #$orderId -> $status\n";
+
+    // Nach MAX_ATTEMPTS gescheiterten Versuchen wird diese Order künftig nicht mehr
+    // von der obigen WHERE-Klausel selektiert — die Alarm-Mail feuert also genau
+    // einmal, statt dass der endgültige Fehlschlag admin-seitig unbemerkt bleibt.
+    $isFinalFailure = $status === 'failed' && (int) $row['lexoffice_attempts'] >= MAX_ATTEMPTS;
+    if ($isFinalFailure && $adminAlertEmail !== '') {
+        send_mail(
+            $adminAlertEmail,
+            'JOTECH Admin',
+            "Lexware-Office-Sync für Bestellung #$orderId endgültig fehlgeschlagen",
+            "Der Rechnungs-Sync für Bestellung #$orderId ist nach {$row['lexoffice_attempts']} Versuchen endgültig fehlgeschlagen "
+                . "und wird nicht mehr automatisch wiederholt.\n\n"
+                . "Letzter Fehler: " . ($row['lexoffice_last_error'] ?? '(unbekannt)') . "\n\n"
+                . "Bitte im Admin-Bereich unter Bestellung #$orderId manuell prüfen und ggf. erneut synchronisieren."
+        );
+    }
 }

@@ -1,6 +1,8 @@
 // JOTECH — Warenkorb (localStorage) + Checkout-Submit für shop.html.
 // Der hier angezeigte Gesamtpreis ist nur eine Schätzung fürs UI; die verbindliche
-// Preisbildung passiert serverseitig in api/checkout.php anhand der DB-Preise.
+// Preisbildung passiert serverseitig in api/create-checkout-session.php anhand der
+// DB-Preise. Name/Adresse/Zahlungsart werden bewusst nicht hier abgefragt, sondern
+// von Stripes gehosteter Checkout-Seite eingesammelt.
 (function () {
   var CART_KEY = 'jotech_cart';
 
@@ -206,34 +208,26 @@
         var payload = {
           website: formData.get('website') || '',
           form_loaded_at: formData.get('form_loaded_at') || 0,
-          customer: {
-            first_name: formData.get('first_name') || '',
-            last_name: formData.get('last_name') || '',
-            email: formData.get('email') || '',
-            phone: formData.get('phone') || '',
-            street: formData.get('street') || '',
-            zip: formData.get('zip') || '',
-            city: formData.get('city') || '',
-            country_code: formData.get('country_code') || 'DE',
-            consent: formData.get('consent') ? true : false,
-          },
+          consent: formData.get('consent') ? true : false,
           items: items.map(function (i) { return { product_id: i.id, quantity: i.qty }; }),
         };
 
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Wird gesendet …';
+        submitBtn.textContent = 'Wird weitergeleitet …';
         errorEl.hidden = true;
 
-        fetch('api/checkout.php', {
+        fetch('api/create-checkout-session.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         })
           .then(function (r) { return r.json().then(function (body) { return { ok: r.ok, body: body }; }); })
           .then(function (result) {
-            if (result.ok && result.body && result.body.status === 'success') {
-              clearCart();
-              window.location.href = 'danke.html?status=success';
+            if (result.ok && result.body && result.body.status === 'success' && result.body.checkout_url) {
+              // Warenkorb bleibt in localStorage erhalten, bis die Zahlung bei
+              // Stripe bestätigt ist (siehe danke.html) — so geht bei einem
+              // Abbruch auf der Stripe-Seite nichts verloren.
+              window.location.href = result.body.checkout_url;
               return;
             }
             throw new Error((result.body && result.body.message) || 'Bestellung fehlgeschlagen.');
@@ -242,7 +236,7 @@
             errorEl.textContent = err.message || 'Bestellung fehlgeschlagen. Bitte versuche es erneut.';
             errorEl.hidden = false;
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Kostenpflichtig bestellen →';
+            submitBtn.textContent = 'Weiter zur Zahlung →';
           });
       });
     }

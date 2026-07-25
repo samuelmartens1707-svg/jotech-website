@@ -54,6 +54,14 @@
         <a href="index.html" class="btn btn--ghost" style="margin-top:2rem;">Zurück zur Startseite</a>
       </div>
 
+      <div class="status-panel" id="panelOrderSuccess" style="display:none;">
+        <div class="mark">✓</div>
+        <div class="eyebrow" style="justify-content:center;">Zahlung erfolgreich</div>
+        <h1 style="font-size:clamp(2rem,4.5vw,3rem);">Danke für deine Bestellung!</h1>
+        <p style="margin-inline:auto; margin-top:1rem;">Deine Zahlung ist bei uns eingegangen. Eine Bestellbestätigung sowie die Rechnung erhältst du in Kürze per E-Mail.</p>
+        <a href="shop.html" class="btn btn--ghost" style="margin-top:2rem;">Zurück zum Shop</a>
+      </div>
+
       <div class="status-panel" id="panelError" style="display:none;">
         <div class="mark" style="border-color:var(--red); color:var(--red);">!</div>
         <div class="eyebrow" style="justify-content:center;">Etwas ist schiefgelaufen</div>
@@ -82,6 +90,13 @@
   if (params.get('status') === 'error') {
     document.getElementById('panelSuccess').style.display = 'none';
     document.getElementById('panelError').style.display = 'block';
+    return;
+  }
+  if (params.get('status') === 'success' && params.get('source') === 'order') {
+    document.getElementById('panelSuccess').style.display = 'none';
+    document.getElementById('panelOrderSuccess').style.display = 'block';
+    // Zahlung war erfolgreich — der Warenkorb (localStorage) wird jetzt geleert.
+    try { localStorage.removeItem('jotech_cart'); } catch (e) {}
   }
 })();
 </script>
