@@ -10,14 +10,14 @@ ALTER TABLE orders
   MODIFY COLUMN billing_zip VARCHAR(16) NULL,
   MODIFY COLUMN billing_city VARCHAR(120) NULL,
   MODIFY COLUMN status VARCHAR(16) NOT NULL DEFAULT 'pending_payment',
-  ADD COLUMN IF NOT EXISTS payment_status VARCHAR(16) NOT NULL DEFAULT 'pending' AFTER status,
-  ADD COLUMN IF NOT EXISTS stripe_checkout_session_id VARCHAR(255) NULL AFTER payment_status,
-  ADD COLUMN IF NOT EXISTS stripe_payment_intent_id VARCHAR(64) NULL AFTER stripe_checkout_session_id,
-  ADD COLUMN IF NOT EXISTS paid_at DATETIME NULL AFTER stripe_payment_intent_id;
+  ADD COLUMN payment_status VARCHAR(16) NOT NULL DEFAULT 'pending' AFTER status,
+  ADD COLUMN stripe_checkout_session_id VARCHAR(255) NULL AFTER payment_status,
+  ADD COLUMN stripe_payment_intent_id VARCHAR(64) NULL AFTER stripe_checkout_session_id,
+  ADD COLUMN paid_at DATETIME NULL AFTER stripe_payment_intent_id;
 
 ALTER TABLE orders
-  ADD UNIQUE INDEX IF NOT EXISTS uq_orders_stripe_checkout_session_id (stripe_checkout_session_id),
-  ADD INDEX IF NOT EXISTS idx_orders_payment_status (payment_status);
+  ADD UNIQUE INDEX uq_orders_stripe_checkout_session_id (stripe_checkout_session_id),
+  ADD INDEX idx_orders_payment_status (payment_status);
 
 CREATE TABLE IF NOT EXISTS stripe_webhook_events (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

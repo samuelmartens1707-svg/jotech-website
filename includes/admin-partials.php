@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/stripeService.php';
+
 function admin_head(string $title): void
 {
     ?><!doctype html>
@@ -32,6 +34,7 @@ function admin_nav(string $active): void
         <?php foreach ($items as $key => [$href, $label]): ?>
           <a href="<?= htmlspecialchars($href, ENT_QUOTES) ?>" class="<?= $key === $active ? 'is-active' : '' ?>"><?= htmlspecialchars($label, ENT_QUOTES) ?></a>
         <?php endforeach; ?>
+        <a href="<?= htmlspecialchars(stripe_dashboard_base_url() . '/payments', ENT_QUOTES) ?>" target="_blank" rel="noopener">Stripe ↗</a>
       </nav>
       <div class="who">
         Angemeldet als <?= htmlspecialchars(current_admin_username() ?? '', ENT_QUOTES) ?> · <a href="logout.php" class="link-btn link-btn--muted">Abmelden</a>

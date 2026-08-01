@@ -4,6 +4,7 @@ declare(strict_types=1);
 require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../includes/lexwareOfficeService.php';
+require __DIR__ . '/../includes/stripeService.php';
 require_admin_login();
 
 $pdo = get_pdo();
@@ -67,8 +68,14 @@ admin_nav('orders');
   <p style="margin:0;">
     Status: <?= payment_status_pill($order['payment_status']) ?><br>
     <?php if ($order['paid_at']): ?>Bezahlt am: <?= htmlspecialchars($order['paid_at'], ENT_QUOTES) ?><br><?php endif; ?>
-    <?php if ($order['stripe_checkout_session_id']): ?>Checkout-Session: <code><?= htmlspecialchars($order['stripe_checkout_session_id'], ENT_QUOTES) ?></code><br><?php endif; ?>
-    <?php if ($order['stripe_payment_intent_id']): ?>Payment-Intent: <code><?= htmlspecialchars($order['stripe_payment_intent_id'], ENT_QUOTES) ?></code><?php endif; ?>
+    <?php if ($order['stripe_checkout_session_id']): ?>
+      Checkout-Session: <code><?= htmlspecialchars($order['stripe_checkout_session_id'], ENT_QUOTES) ?></code>
+      <a href="<?= htmlspecialchars(stripe_dashboard_checkout_session_url($order['stripe_checkout_session_id']), ENT_QUOTES) ?>" target="_blank" rel="noopener">In Stripe öffnen ↗</a><br>
+    <?php endif; ?>
+    <?php if ($order['stripe_payment_intent_id']): ?>
+      Payment-Intent: <code><?= htmlspecialchars($order['stripe_payment_intent_id'], ENT_QUOTES) ?></code>
+      <a href="<?= htmlspecialchars(stripe_dashboard_payment_url($order['stripe_payment_intent_id']), ENT_QUOTES) ?>" target="_blank" rel="noopener">In Stripe öffnen ↗</a>
+    <?php endif; ?>
   </p>
 </div>
 

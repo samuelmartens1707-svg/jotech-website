@@ -33,6 +33,29 @@ function stripe_site_base_url(): string
 }
 
 /**
+ * Stripe-Objekt-IDs verraten selbst nicht, ob sie im Test- oder Live-Modus
+ * angelegt wurden — das entscheidet allein, mit welchem Secret Key gearbeitet
+ * wird. Deshalb wird der /test/-Präfix anhand des konfigurierten Keys gewählt,
+ * damit Deep-Links ins Dashboard immer im richtigen Modus landen.
+ */
+function stripe_dashboard_base_url(): string
+{
+    $key = (string) env('STRIPE_SECRET_KEY', '');
+    $isTestMode = str_starts_with($key, 'sk_test_') || str_starts_with($key, 'rk_test_');
+    return $isTestMode ? 'https://dashboard.stripe.com/test' : 'https://dashboard.stripe.com';
+}
+
+function stripe_dashboard_payment_url(string $paymentIntentId): string
+{
+    return stripe_dashboard_base_url() . '/payments/' . rawurlencode($paymentIntentId);
+}
+
+function stripe_dashboard_checkout_session_url(string $sessionId): string
+{
+    return stripe_dashboard_base_url() . '/checkout/sessions/' . rawurlencode($sessionId);
+}
+
+/**
  * Zentraler HTTP-Client für die Stripe-API. Stripe erwartet form-urlencoded Bodies;
  * verschachtelte Arrays (z.B. line_items) werden von http_build_query() automatisch
  * in der von Stripe erwarteten Bracket-Notation kodiert.
