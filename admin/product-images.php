@@ -78,28 +78,7 @@ if ($action === 'upload') {
     $imageId = (int) ($_POST['image_id'] ?? 0);
     $direction = (string) ($_POST['direction'] ?? '');
 
-    $stmt = $pdo->prepare('SELECT id, sort_order FROM product_images WHERE product_id = ? ORDER BY sort_order ASC, id ASC');
-    $stmt->execute([$productId]);
-    $images = $stmt->fetchAll();
-
-    $index = null;
-    foreach ($images as $i => $img) {
-        if ((int) $img['id'] === $imageId) {
-            $index = $i;
-            break;
-        }
-    }
-
-    if ($index !== null) {
-        $neighborIndex = $direction === 'up' ? $index - 1 : $index + 1;
-        if (isset($images[$neighborIndex])) {
-            $a = $images[$index];
-            $b = $images[$neighborIndex];
-            $update = $pdo->prepare('UPDATE product_images SET sort_order = ? WHERE id = ?');
-            $update->execute([$b['sort_order'], $a['id']]);
-            $update->execute([$a['sort_order'], $b['id']]);
-        }
-    }
+    reorder_adjacent($pdo, 'product_images', 'product_id = ?', [$productId], $imageId, $direction);
 } elseif ($action === 'delete') {
     $imageId = (int) ($_POST['image_id'] ?? 0);
     $pdo->prepare('DELETE FROM product_images WHERE id = ? AND product_id = ?')->execute([$imageId, $productId]);

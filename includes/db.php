@@ -42,3 +42,38 @@ function get_pdo(): PDO
 
     return $pdo;
 }
+
+/**
+ * Vertauscht sort_order zwischen einer Zeile und ihrem Nachbarn in der durch
+ * $whereSql/$whereParams definierten Reihenfolge. Gemeinsame Implementierung
+ * für die "rauf/runter"-Sortierung von Produkten und Produktbildern.
+ */
+function reorder_adjacent(PDO $pdo, string $table, string $whereSql, array $whereParams, int $targetId, string $direction): void
+{
+    $sql = "SELECT id, sort_order FROM $table" . ($whereSql !== '' ? " WHERE $whereSql" : '') . ' ORDER BY sort_order ASC, id ASC';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($whereParams);
+    $rows = $stmt->fetchAll();
+
+    $index = null;
+    foreach ($rows as $i => $row) {
+        if ((int) $row['id'] === $targetId) {
+            $index = $i;
+            break;
+        }
+    }
+    if ($index === null) {
+        return;
+    }
+
+    $neighborIndex = $direction === 'up' ? $index - 1 : $index + 1;
+    if (!isset($rows[$neighborIndex])) {
+        return;
+    }
+
+    $a = $rows[$index];
+    $b = $rows[$neighborIndex];
+    $update = $pdo->prepare("UPDATE $table SET sort_order = ? WHERE id = ?");
+    $update->execute([$b['sort_order'], $a['id']]);
+    $update->execute([$a['sort_order'], $b['id']]);
+}

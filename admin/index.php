@@ -10,6 +10,9 @@ $openInquiries = (int) $pdo->query("SELECT COUNT(*) FROM inquiries WHERE status 
 $totalInquiries = (int) $pdo->query('SELECT COUNT(*) FROM inquiries')->fetchColumn();
 $activeProducts = (int) $pdo->query('SELECT COUNT(*) FROM products WHERE is_active = 1')->fetchColumn();
 $totalProducts = (int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();
+$ordersPaidToday = (int) $pdo->query("SELECT COUNT(*) FROM orders WHERE payment_status = 'paid' AND DATE(created_at) = CURDATE()")->fetchColumn();
+$ordersPendingPayment = (int) $pdo->query("SELECT COUNT(*) FROM orders WHERE payment_status = 'pending'")->fetchColumn();
+$lexofficeFailedCount = (int) $pdo->query("SELECT COUNT(*) FROM orders WHERE lexoffice_sync_status = 'failed'")->fetchColumn();
 
 require __DIR__ . '/../includes/admin-partials.php';
 admin_head('Dashboard');
@@ -37,8 +40,24 @@ admin_nav('dashboard');
     <span class="num"><?= $totalProducts ?></span>
     <span class="label">Produkte gesamt</span>
   </div>
+  <div class="stat-card">
+    <span class="num"><?= $ordersPaidToday ?></span>
+    <span class="label">Bestellungen heute</span>
+  </div>
+  <div class="stat-card">
+    <span class="num"><?= $ordersPendingPayment ?></span>
+    <span class="label">Zahlungen ausstehend</span>
+  </div>
+  <div class="stat-card">
+    <span class="num"><?= $lexofficeFailedCount ?></span>
+    <span class="label">Lexoffice-Sync fehlgeschlagen</span>
+  </div>
 </div>
 
-<p><a href="inquiries.php" class="btn btn--primary">Anfragen ansehen</a> &nbsp; <a href="products.php" class="btn btn--ghost">Produkte verwalten</a></p>
+<?php if ($lexofficeFailedCount > 0): ?>
+  <p class="flash"><?= $lexofficeFailedCount ?> Bestellung(en) mit fehlgeschlagenem Lexoffice-Sync — <a href="orders.php?sync=failed">jetzt ansehen</a>.</p>
+<?php endif; ?>
+
+<p><a href="inquiries.php" class="btn btn--primary">Anfragen ansehen</a> &nbsp; <a href="products.php" class="btn btn--ghost">Produkte verwalten</a> &nbsp; <a href="orders.php" class="btn btn--ghost">Bestellungen ansehen</a></p>
 
 <?php admin_foot(); ?>

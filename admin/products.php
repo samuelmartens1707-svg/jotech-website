@@ -20,24 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['
         exit;
     }
 
-    $ordered = $pdo->query('SELECT id, sort_order FROM products ORDER BY sort_order ASC, id ASC')->fetchAll();
-    $index = null;
-    foreach ($ordered as $i => $row) {
-        if ((int) $row['id'] === $id) {
-            $index = $i;
-            break;
-        }
-    }
-    if ($index !== null) {
-        $neighborIndex = $action === 'move_up' ? $index - 1 : $index + 1;
-        if (isset($ordered[$neighborIndex])) {
-            $a = $ordered[$index];
-            $b = $ordered[$neighborIndex];
-            $update = $pdo->prepare('UPDATE products SET sort_order = ? WHERE id = ?');
-            $update->execute([$b['sort_order'], $a['id']]);
-            $update->execute([$a['sort_order'], $b['id']]);
-        }
-    }
+    reorder_adjacent($pdo, 'products', '', [], $id, $action === 'move_up' ? 'up' : 'down');
     header('Location: products.php');
     exit;
 }

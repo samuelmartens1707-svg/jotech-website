@@ -15,14 +15,14 @@ function smtp_configured(): bool
     return env('SMTP_HOST', '') !== '';
 }
 
-function send_mail(string $toEmail, string $toName, string $subject, string $body): bool
+function send_mail(string $toEmail, string $toName, string $subject, string $body, ?string $replyToEmail = null, ?string $replyToName = null): bool
 {
     if (!smtp_configured()) {
         return false;
     }
 
     try {
-        mailer_send_via_smtp($toEmail, $toName, $subject, $body);
+        mailer_send_via_smtp($toEmail, $toName, $subject, $body, $replyToEmail, $replyToName);
         return true;
     } catch (Throwable $e) {
         error_log('JOTECH Mailer: ' . $e->getMessage());
@@ -30,7 +30,7 @@ function send_mail(string $toEmail, string $toName, string $subject, string $bod
     }
 }
 
-function mailer_send_via_smtp(string $toEmail, string $toName, string $subject, string $body): void
+function mailer_send_via_smtp(string $toEmail, string $toName, string $subject, string $body, ?string $replyToEmail = null, ?string $replyToName = null): void
 {
     $host = env('SMTP_HOST', '');
     $port = (int) env('SMTP_PORT', '587');
@@ -89,12 +89,15 @@ function mailer_send_via_smtp(string $toEmail, string $toName, string $subject, 
         $headers = [
             'Date: ' . date('r'),
             'From: ' . mailer_encode_header($fromName) . ' <' . $fromEmail . '>',
-            'To: ' . mailer_encode_header($toName) . ' <' . $toEmail . '>',
-            'Subject: ' . mailer_encode_header($subject),
-            'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: 8bit',
         ];
+        if ($replyToEmail !== null && $replyToEmail !== '') {
+            $headers[] = 'Reply-To: ' . mailer_encode_header($replyToName ?? $replyToEmail) . ' <' . $replyToEmail . '>';
+        }
+        $headers[] = 'To: ' . mailer_encode_header($toName) . ' <' . $toEmail . '>';
+        $headers[] = 'Subject: ' . mailer_encode_header($subject);
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-Type: text/plain; charset=UTF-8';
+        $headers[] = 'Content-Transfer-Encoding: 8bit';
         $normalizedBody = str_replace("\r\n", "\n", $body);
         $normalizedBody = str_replace("\n", "\r\n", $normalizedBody);
         // SMTP-Regel: Zeilen, die mit einem Punkt beginnen, müssen verdoppelt werden.

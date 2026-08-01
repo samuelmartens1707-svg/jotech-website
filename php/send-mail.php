@@ -2,12 +2,11 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../includes/mailer.php';
 
-// ACHTUNG vor dem Livegang: Domain jotech.de ist noch nicht registriert, dieses Postfach
-// existiert also noch nicht. Bis das Postfach eingerichtet ist, ersatzweise auf eine
-// erreichbare Adresse (z.B. jotechstomin@gmail.com) umstellen, sonst gehen alle
-// Formular-Anfragen ins Leere.
-define('RECIPIENT_EMAIL', 'info@jotech.de');
+// Empfänger über INQUIRY_RECIPIENT_EMAIL konfigurierbar (siehe .env.example) — Fallback
+// info@jotech.de nur nutzen, solange die Domain/das Postfach tatsächlich existiert.
+define('RECIPIENT_EMAIL', (string) env('INQUIRY_RECIPIENT_EMAIL', 'info@jotech.de'));
 define('MIN_SECONDS_TO_FILL', 3);
 define('MAX_FIELD_LENGTH', 4000);
 
@@ -34,6 +33,33 @@ function clean_multiline(string $value): string
 function encode_header(string $value): string
 {
     return '=?UTF-8?B?' . base64_encode($value) . '?=';
+}
+
+// Versucht zuerst den konfigurierten SMTP-Versand (send_mail()); solange SMTP nicht
+// eingerichtet oder fehlerhaft ist, fällt das auf PHP-natives mail() zurück, damit
+// Formular-Anfragen nie stillschweigend verloren gehen.
+function send_notification(
+    string $toEmail,
+    string $toName,
+    string $subject,
+    string $body,
+    ?string $replyToEmail = null,
+    ?string $replyToName = null
+): bool {
+    if (send_mail($toEmail, $toName, $subject, $body, $replyToEmail, $replyToName)) {
+        return true;
+    }
+
+    $headers = [
+        'From: JOTECH Website <no-reply@jotech.de>',
+        'Content-Type: text/plain; charset=UTF-8',
+        'X-Mailer: PHP/' . phpversion(),
+    ];
+    if ($replyToEmail !== null && $replyToEmail !== '') {
+        $headers[] = 'Reply-To: ' . encode_header($replyToName ?? $replyToEmail) . ' <' . $replyToEmail . '>';
+    }
+
+    return mail($toEmail, encode_header($subject), $body, implode("\r\n", $headers));
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -159,13 +185,24 @@ foreach ($detailLines as [$label, $value]) {
     $body .= "$label:\n$value\n\n";
 }
 
-$headers = [
-    'From: JOTECH Website <no-reply@jotech.de>',
-    'Reply-To: ' . encode_header($name) . ' <' . $email . '>',
-    'Content-Type: text/plain; charset=UTF-8',
-    'X-Mailer: PHP/' . phpversion(),
-];
+$sent = send_notification(RECIPIENT_EMAIL, 'JOTECH', 'JOTECH — ' . $subjectLabel, $body, $email, $name);
 
-$sent = mail(RECIPIENT_EMAIL, encode_header('JOTECH — ' . $subjectLabel), $body, implode("\r\n", $headers));
+// Best-effort: eine fehlgeschlagene Kundenbestätigung darf den eigentlichen
+// Anfragen-Eingang (oben) nicht als "error" erscheinen lassen.
+if ($sent) {
+    $confirmationBody = "Hallo $name,\n\n"
+        . "vielen Dank für deine Anfrage bei JOTECH. Wir haben sie erhalten und melden uns so schnell wie möglich bei dir.\n\n"
+        . "Zur Erinnerung, das hast du uns geschickt:\n"
+        . str_repeat('-', 40) . "\n\n";
+    foreach ($detailLines as [$label, $value]) {
+        if ($value === '') {
+            continue;
+        }
+        $confirmationBody .= "$label:\n$value\n\n";
+    }
+    $confirmationBody .= "Viele Grüße\nDein JOTECH-Team";
+
+    send_notification($email, $name, 'Deine Anfrage bei JOTECH ist eingegangen', $confirmationBody);
+}
 
 redirect_to($sent ? 'success' : 'error');
